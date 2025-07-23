@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 1.1: Converting mg to ml - calculating correctly</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .lesson-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+        }
+        
+        .lesson-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .lesson-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .lesson-duration {
+            color: #64748b;
+            font-size: 1rem;
+        }
+        
+        .progress-bar {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .step {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            background: #f8fafc;
+            border-left: 4px solid #e2e8f0;
+            opacity: 0.5;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        
+        .step.active {
+            opacity: 1;
+            pointer-events: auto;
+            border-left-color: #667eea;
+            background: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+        
+        .step.completed {
+            opacity: 1;
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+        
+        .step.completed .step-number {
+            background: #10b981;
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .step-content {
+            margin-left: 46px;
+        }
+        
+        .video-placeholder {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 3rem;
+            border-radius: 8px;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .interactive-task {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .task-question {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .answer-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .answer-option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            padding: 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .answer-option:hover {
+            border-color: #667eea;
+        }
+        
+        .answer-option.selected {
+            border-color: #667eea;
+            background: #ede9fe;
+        }
+        
+        .answer-option.correct {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+        
+        .answer-option.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+        
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background: #f0fdf4;
+            border: 1px solid #10b981;
+            color: #065f46;
+        }
+        
+        .feedback.incorrect {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+        
+        .calculator {
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .calc-input {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .calc-input input {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            width: 100px;
+        }
+        
+        .calc-result {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 2px solid #10b981;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .continue-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .continue-btn:hover {
+            background: #5a67d8;
+        }
+        
+        .continue-btn.visible {
+            display: inline-block;
+        }
+        
+        .back-btn {
+            background: #64748b;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+        
+        .complete-lesson-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .navigation {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="lesson-container">
+        <div class="lesson-header">
+            <h1 class="lesson-title" data-en="Converting mg to ml - calculating correctly" data-sw="Kubadilisha mg hadi ml - kuhesabu kwa usahihi">
+                Converting mg to ml - calculating correctly
+            </h1>
+            <p class="lesson-duration" data-en="Duration: 25 minutes" data-sw="Muda: dakika 25">Duration: 25 minutes</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Step 1: Introduction -->
+        <div class="step active" id="step1">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <h2 class="step-title" data-en="Introduction" data-sw="Utangulizi">Introduction</h2>
+            </div>
+            <div class="step-content">
+                <div class="video-placeholder">
+                    <h3 data-en="📹 Video Lecture" data-sw="📹 Hotuba ya Video">📹 Video Lecture</h3>
+                    <p data-en="Overview of Safe Use of Antibiotics in Children course" data-sw="Muhtasari wa kozi ya Matumizi Salama ya Antibiotiki kwa Watoto">Overview of Safe Use of Antibiotics in Children course</p>
+                </div>
+                <h4 data-en="What you'll learn today:" data-sw="Utakachojifunza leo:">What you'll learn today:</h4>
+                <ul>
+                    <li data-en="Why dosing errors are dangerous (overdose/underdose)" data-sw="Kwa nini makosa ya kipimo ni hatari (kupita kiasi/kupunguza)">Why dosing errors are dangerous (overdose/underdose)</li>
+                    <li data-en="How incorrect doses lead to antibiotic resistance" data-sw="Jinsi vipimo vibaya vinavyosababisha upinzani wa antibiotiki">How incorrect doses lead to antibiotic resistance</li>
+                    <li data-en="How we calculate medications in hospital practice" data-sw="Jinsi tunavyohesabu dawa katika utaalamu wa hospitali">How we calculate medications in hospital practice</li>
+                </ul>
+                <button class="continue-btn visible" onclick="completeStep(1)">
+                    <span data-en="Continue to Practical Task" data-sw="Endelea kwa Kazi ya Vitendo">Continue to Practical Task</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Provocative Task -->
+        <div class="step" id="step2">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <h2 class="step-title" data-en="Provocative Task" data-sw="Kazi ya Kuchochea">Provocative Task</h2>
+            </div>
+            <div class="step-content">
+                <div class="interactive-task">
+                    <div class="task-question" data-en="A mother brings her 5-year-old child and asks for metronidazole. How much should you give?" data-sw="Mama analeta mtoto wake wa miaka 5 na anaomba metronidazole. Utampa kiasi gani?">
+                        A mother brings her 5-year-old child and asks for metronidazole. How much should you give?
+                    </div>
+                    <div class="answer-options">
+                        <div class="answer-option" onclick="selectAnswer(this, false)">
+                            <span data-en="2.5 ml" data-sw="ml 2.5">2.5 ml</span>
+                        </div>
+                        <div class="answer-option" onclick="selectAnswer(this, false)">
+                            <span data-en="5 ml" data-sw="ml 5">5 ml</span>
+                        </div>
+                        <div class="answer-option" onclick="selectAnswer(this, false)">
+                            <span data-en="10 ml" data-sw="ml 10">10 ml</span>
+                        </div>
+                        <div class="answer-option" onclick="selectAnswer(this, true)">
+                            <span data-en="INSUFFICIENT DATA - Cannot calculate" data-sw="DATA HAZITOSHI - Haiwezekani kuhesabu">INSUFFICIENT DATA - Cannot calculate</span>
+                        </div>
+                    </div>
+                    <div class="feedback" id="taskFeedback"></div>
+                </div>
+                <button class="continue-btn" id="step2Continue" onclick="completeStep(2)">
+                    <span data-en="Continue to Theory" data-sw="Endelea kwa Nadharia">Continue to Theory</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: Mini-Lecture -->
+        <div class="step" id="step3">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <h2 class="step-title" data-en="Theory: What You Need to Know ALWAYS" data-sw="Nadharia: Unachohitaji Kujua KILA WAKATI">Theory: What You Need to Know ALWAYS</h2>
+            </div>
+            <div class="step-content">
+                <div class="video-placeholder">
+                    <h3 data-en="📹 Mini-Lecture with Examples" data-sw="📹 Hotuba Ndogo na Mifano">📹 Mini-Lecture with Examples</h3>
+                </div>
+                
+                <h4 data-en="Essential Information for Every Calculation:" data-sw="Habari Muhimu kwa Kila Mahesabu:">Essential Information for Every Calculation:</h4>
+                <div style="background: #fef3c7; padding: 1rem; border-radius: 6px; margin: 1rem 0;">
+                    <ol>
+                        <li><strong data-en="Child's weight in kg" data-sw="Uzito wa mtoto kwa kg">Child's weight in kg</strong></li>
+                        <li><strong data-en="Drug concentration (mg/ml)" data-sw="Mzito wa dawa (mg/ml)">Drug concentration (mg/ml)</strong></li>
+                        <li><strong data-en="Prescribed dose in mg" data-sw="Kipimo kilichopatwa kwa mg">Prescribed dose in mg</strong></li>
+                    </ol>
+                </div>
+
+                <h4 data-en="The Universal Formula:" data-sw="Fomula ya Kimataifa:">The Universal Formula:</h4>
+                <div style="background: #ddd6fe; padding: 1.5rem; border-radius: 8px; text-align: center; font-size: 1.2rem; font-weight: 600; margin: 1rem 0;">
+                    <span data-en="Volume (ml) = Dose (mg) ÷ Concentration (mg/ml)" data-sw="Kiasi (ml) = Kipimo (mg) ÷ Mzito (mg/ml)">Volume (ml) = Dose (mg) ÷ Concentration (mg/ml)</span>
+                </div>
+
+                <h4 data-en="Why Different Concentrations Matter:" data-sw="Kwa Nini Mzito Tofauti ni Muhimu:">Why Different Concentrations Matter:</h4>
+                <div style="background: #f0fdf4; padding: 1rem; border-radius: 6px; margin: 1rem 0;">
+                    <p><strong>Cefadroxil Example:</strong></p>
+                    <ul>
+                        <li data-en="125 mg/5 ml concentration → 5 ml gives 125 mg" data-sw="Mzito wa 125 mg/5 ml → ml 5 inatoa mg 125">125 mg/5 ml concentration → 5 ml gives 125 mg</li>
+                        <li data-en="250 mg/5 ml concentration → 5 ml gives 250 mg" data-sw="Mzito wa 250 mg/5 ml → ml 5 inatoa mg 250">250 mg/5 ml concentration → 5 ml gives 250 mg</li>
+                    </ul>
+                    <p style="color: #059669; font-weight: 600;" data-en="Same volume = Different dose!" data-sw="Kiasi sawa = Kipimo tofauti!">Same volume = Different dose!</p>
+                </div>
+
+                <button class="continue-btn visible" onclick="completeStep(3)">
+                    <span data-en="Practice Calculations" data-sw="Zoezi la Mahesabu">Practice Calculations</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 4: Practical Calculations -->
+        <div class="step" id="step4">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <h2 class="step-title" data-en="Interactive Calculator Practice" data-sw="Mazoezi ya Kikokotoo cha Majibizano">Interactive Calculator Practice</h2>
+            </div>
+            <div class="step-content">
+                <h4 data-en="Calculate: Cefadroxil for 15 kg child" data-sw="Hesabu: Cefadroxil kwa mtoto wa kg 15">Calculate: Cefadroxil for 15 kg child</h4>
+                <div class="calculator">
+                    <p><strong data-en="Given:" data-sw="Iliyotolewa:">Given:</strong></p>
+                    <ul>
+                        <li data-en="Child weight: 15 kg" data-sw="Uzito wa mtoto: kg 15">Child weight: 15 kg</li>
+                        <li data-en="Prescribed dose: 30 mg/kg/day" data-sw="Kipimo kilichopatwa: mg 30/kg/siku">Prescribed dose: 30 mg/kg/day</li>
+                        <li data-en="Available: Cefadroxil 125 mg/5 ml" data-sw="Inapatikana: Cefadroxil mg 125/ml 5">Available: Cefadroxil 125 mg/5 ml</li>
+                    </ul>
+                    
+                    <div style="margin: 1rem 0;">
+                        <label data-en="Step 1: Calculate total daily dose" data-sw="Hatua 1: Hesabu jumla ya kipimo cha kila siku">Step 1: Calculate total daily dose</label>
+                        <div class="calc-input">
+                            <span>15 kg × 30 mg/kg = </span>
+                            <input type="number" id="totalDose" placeholder="?" onchange="checkCalculation()">
+                            <span>mg/day</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 1rem 0;">
+                        <label data-en="Step 2: Calculate volume needed" data-sw="Hatua 2: Hesabu kiasi kinachohitajika">Step 2: Calculate volume needed</label>
+                        <div class="calc-input">
+                            <input type="number" id="doseInput" placeholder="mg" readonly>
+                            <span>mg ÷ 125 mg/5ml = </span>
+                            <input type="number" id="volumeResult" placeholder="?" onchange="checkCalculation()">
+                            <span>ml/day</span>
+                        </div>
+                    </div>
+                    
+                    <div class="calc-result" id="calcResult">
+                        <p style="color: #10b981; font-weight: 600;" data-en="✅ Correct! Great calculation skills!" data-sw="✅ Sahihi! Ujuzi mkuu wa mahesabu!">✅ Correct! Great calculation skills!</p>
+                    </div>
+                </div>
+                
+                <button class="continue-btn" id="step4Continue" onclick="completeStep(4)">
+                    <span data-en="Learn Course Calculations" data-sw="Jifunze Mahesabu ya Matibabu">Learn Course Calculations</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 5: Complete Course Calculation -->
+        <div class="step" id="step5">
+            <div class="step-header">
+                <div class="step-number">5</div>
+                <h2 class="step-title" data-en="Calculating for Complete Treatment" data-sw="Kuhesabu kwa Matibabu Kamili">Calculating for Complete Treatment</h2>
+            </div>
+            <div class="step-content">
+                <div style="background: #fef3c7; padding: 1rem; border-radius: 6px; margin: 1rem 0;">
+                    <h4 data-en="⚠️ Critical Safety Check" data-sw="⚠️ Ukaguzi Muhimu wa Usalama">⚠️ Critical Safety Check</h4>
+                    <p data-en="ALWAYS verify there's enough medication for the complete course BEFORE starting treatment" data-sw="KILA WAKATI thibitisha kuna dawa za kutosha kwa matibabu kamili KABLA ya kuanza matibabu">ALWAYS verify there's enough medication for the complete course BEFORE starting treatment</p>
+                </div>
+
+                <h4 data-en="Example: Will one bottle be enough?" data-sw="Mfano: Je chupa moja itatosha?">Example: Will one bottle be enough?</h4>
+                <div class="calculator">
+                    <p><strong data-en="Scenario:" data-sw="Hali:">Scenario:</strong></p>
+                    <ul>
+                        <li data-en="Amoxiclav 125mg/5ml, 100ml bottle" data-sw="Amoxiclav mg 125/ml 5, chupa ya ml 100">Amoxiclav 125mg/5ml, 100ml bottle</li>
+                        <li data-en="15 kg child, 7 days treatment" data-sw="Mtoto wa kg 15, siku 7 za matibabu">15 kg child, 7 days treatment</li>
+                        <li data-en="Dose: 25 mg/kg twice daily" data-sw="Kipimo: mg 25/kg mara mbili kwa siku">Dose: 25 mg/kg twice daily</li>
+                    </ul>
+                    
+                    <div class="interactive-task">
+                        <div class="task-question" data-en="Calculate total ml needed for 7 days:" data-sw="Hesabu jumla ya ml inayohitajika kwa siku 7:">Calculate total ml needed for 7 days:</div>
+                        <div class="answer-options">
+                            <div class="answer-option" onclick="selectCourseAnswer(this, false)">
+                                <span data-en="52.5 ml (enough)" data-sw="ml 52.5 (inatosha)">52.5 ml (enough)</span>
+                            </div>
+                            <div class="answer-option" onclick="selectCourseAnswer(this, true)">
+                                <span data-en="105 ml (need 2 bottles)" data-sw="ml 105 (inahitaji chupa 2)">105 ml (need 2 bottles)</span>
+                            </div>
+                            <div class="answer-option" onclick="selectCourseAnswer(this, false)">
+                                <span data-en="75 ml (enough)" data-sw="ml 75 (inatosha)">75 ml (enough)</span>
+                            </div>
+                        </div>
+                        <div class="feedback" id="courseFeedback"></div>
+                    </div>
+                </div>
+                
+                <button class="continue-btn" id="step5Continue" onclick="completeStep(5)">
+                    <span data-en="Final Knowledge Check" data-sw="Ukaguzi wa Mwisho wa Maarifa">Final Knowledge Check</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 6: Knowledge Check -->
+        <div class="step" id="step6">
+            <div class="step-header">
+                <div class="step-number">6</div>
+                <h2 class="step-title" data-en="Knowledge Check" data-sw="Ukaguzi wa Maarifa">Knowledge Check</h2>
+            </div>
+            <div class="step-content">
+                <p data-en="Test your understanding with these quick questions:" data-sw="Jaribu uelewa wako na maswali haya ya haraka:">Test your understanding with these quick questions:</p>
+                
+                <div class="interactive-task" style="margin: 1rem 0;">
+                    <div class="task-question" data-en="What information do you ALWAYS need for dose calculation?" data-sw="Ni habari gani unazohitaji KILA WAKATI kwa mahesabu ya kipimo?">What information do you ALWAYS need for dose calculation?</div>
+                    <div class="answer-options">
+                        <div class="answer-option" onclick="selectFinalAnswer(this, 1, false)">
+                            <span data-en="Only child's age" data-sw="Umri wa mtoto tu">Only child's age</span>
+                        </div>
+                        <div class="answer-option" onclick="selectFinalAnswer(this, 1, true)">
+                            <span data-en="Weight + drug concentration + prescribed dose" data-sw="Uzito + mzito wa dawa + kipimo kilichopatwa">Weight + drug concentration + prescribed dose</span>
+                        </div>
+                        <div class="answer-option" onclick="selectFinalAnswer(this, 1, false)">
+                            <span data-en="Only the bottle label" data-sw="Lebo la chupa tu">Only the bottle label</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="interactive-task" style="margin: 1rem 0;">
+                    <div class="task-question" data-en="Why is checking treatment course length important?" data-sw="Kwa nini kukagua urefu wa matibabu ni muhimu?">Why is checking treatment course length important?</div>
+                    <div class="answer-options">
+                        <div class="answer-option" onclick="selectFinalAnswer(this, 2, false)">
+                            <span data-en="To save money only" data-sw="Kuokoa pesa tu">To save money only</span>
+                        </div>
+                        <div class="answer-option" onclick="selectFinalAnswer(this, 2, true)">
+                            <span data-en="To prevent incomplete treatment and resistance" data-sw="Kuzuia matibabu yasiyokamilika na upinzani">To prevent incomplete treatment and resistance</span>
+                        </div>
+                        <div class="answer-option" onclick="selectFinalAnswer(this, 2, false)">
+                            <span data-en="It's not important" data-sw="Si muhimu">It's not important</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="complete-lesson-btn" id="completeLessonBtn" onclick="completeLessonFinal()">
+                    <span data-en="🎉 Complete Lesson 1.1" data-sw="🎉 Maliza Somo 1.1">🎉 Complete Lesson 1.1</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="back-btn" onclick="goBackToMain()">
+                <span data-en="← Back to Course" data-sw="← Rudi kwenye Kozi">← Back to Course</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        let currentStep = 1;
+        let totalSteps = 6;
+        let correctAnswers = 0;
+        
+        function updateProgress() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+        
+        function completeStep(stepNumber) {
+            // Mark current step as completed
+            document.getElementById(`step${stepNumber}`).classList.add('completed');
+            document.getElementById(`step${stepNumber}`).classList.remove('active');
+            
+            // Activate next step
+            if (stepNumber < totalSteps) {
+                currentStep = stepNumber + 1;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                
+                // Smooth scroll to next step
+                document.getElementById(`step${currentStep}`).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+            
+            updateProgress();
+        }
+        
+        function selectAnswer(element, isCorrect) {
+            // Remove previous selections
+            const options = element.parentNode.querySelectorAll('.answer-option');
+            options.forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            // Mark selected answer
+            element.classList.add('selected');
+            element.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            // Show feedback
+            const feedback = document.getElementById('taskFeedback');
+            feedback.style.display = 'block';
+            feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            
+            if (isCorrect) {
+                feedback.innerHTML = `
+                    <strong data-en="✅ Exactly right!" data-sw="✅ Hasa sahihi!">✅ Exactly right!</strong><br>
+                    <span data-en="You cannot calculate a dose without knowing the child's weight and the drug concentration. This is a critical safety principle." data-sw="Huwezi kuhesabu kipimo bila kujua uzito wa mtoto na mzito wa dawa. Hii ni kanuni muhimu ya usalama.">You cannot calculate a dose without knowing the child's weight and the drug concentration. This is a critical safety principle.</span>
+                `;
+                document.getElementById('step2Continue').classList.add('visible');
+            } else {
+                feedback.innerHTML = `
+                    <strong data-en="❌ Not quite right." data-sw="❌ Si sahihi kabisa.">❌ Not quite right.</strong><br>
+                    <span data-en="Think about what information you need: child's weight, drug concentration, and prescribed dose. Without these, you cannot safely calculate." data-sw="Fikiria kuhusu habari unazohitaji: uzito wa mtoto, mzito wa dawa, na kipimo kilichopatwa. Bila hizi, huwezi kuhesabu kwa usalama.">Think about what information you need: child's weight, drug concentration, and prescribed dose. Without these, you cannot safely calculate.</span>
+                `;
+            }
+            
+            // Re-apply language
+            window.languageManager.updateContent(window.languageManager.currentLang);
+        }
+        
+        function checkCalculation() {
+            const totalDose = document.getElementById('totalDose').value;
+            const volume = document.getElementById('volumeResult').value;
+            
+            if (totalDose == 450) {
+                document.getElementById('doseInput').value = totalDose;
+                if (volume == 18) {
+                    document.getElementById('calcResult').style.display = 'block';
+                    document.getElementById('step4Continue').classList.add('visible');
+                }
+            }
+        }
+        
+        function selectCourseAnswer(element, isCorrect) {
+            const options = element.parentNode.querySelectorAll('.answer-option');
+            options.forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            element.classList.add('selected');
+            element.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            const feedback = document.getElementById('courseFeedback');
+            feedback.style.display = 'block';
+            feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            
+            if (isCorrect) {
+                feedback.innerHTML = `
+                    <strong data-en="✅ Correct calculation!" data-sw="✅ Mahesabu sahihi!">✅ Correct calculation!</strong><br>
+                    <span data-en="15kg × 25mg/kg × 2 times × 7 days = 5,250mg total. 5,250mg ÷ 125mg/5ml = 210ml ÷ 2 = 105ml needed." data-sw="kg 15 × mg 25/kg × mara 2 × siku 7 = jumla mg 5,250. mg 5,250 ÷ mg 125/ml 5 = ml 210 ÷ 2 = ml 105 inahitajika.">15kg × 25mg/kg × 2 times × 7 days = 5,250mg total. 5,250mg ÷ 125mg/5ml = 210ml ÷ 2 = 105ml needed.</span>
+                `;
+                document.getElementById('step5Continue').classList.add('visible');
+            } else {
+                feedback.innerHTML = `
+                    <strong data-en="❌ Check your calculation" data-sw="❌ Kagua mahesabu yako">❌ Check your calculation</strong><br>
+                    <span data-en="Remember: dose per kg × weight × frequency × days, then convert to ml" data-sw="Kumbuka: kipimo kwa kg × uzito × mzunguko × siku, kisha badilisha hadi ml">Remember: dose per kg × weight × frequency × days, then convert to ml</span>
+                `;
+            }
+            
+            window.languageManager.updateContent(window.languageManager.currentLang);
+        }
+        
+        function selectFinalAnswer(element, questionNumber, isCorrect) {
+            const options = element.parentNode.querySelectorAll('.answer-option');
+            options.forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            element.classList.add('selected');
+            element.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            if (isCorrect) {
+                correctAnswers++;
+            }
+            
+            // Check if all questions answered correctly
+            if (correctAnswers >= 2) {
+                setTimeout(() => {
+                    document.getElementById('completeLessonBtn').style.display = 'inline-block';
+                }, 500);
+            }
+        }
+        
+        function completeLessonFinal() {
+            // Mark lesson as completed
+            markLessonComplete('1.1');
+            
+            // Show success message
+            showNotification('🎉 Lesson 1.1 completed successfully! You can now proceed to Lesson 1.2', 'success');
+            
+            // Return to main page after 2 seconds
+            setTimeout(() => {
+                goBackToMain();
+            }, 2000);
+        }
+        
+        // Initialize progress
+        updateProgress();
+    </script>
+</body>
+</html>
